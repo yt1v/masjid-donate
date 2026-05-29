@@ -26,7 +26,7 @@ const methods: PaymentMethod[] = [
     bgColor: 'bg-pink-50',
     borderColor: 'border-pink-200',
     icon: <Smartphone className="text-pink-600" size={24} />,
-    number: '01XXXXXXXXX',
+    number: '01738052858',
     accountName: 'Masjid Fund',
     instructions: [
       'Open your Bkash app',
@@ -44,7 +44,7 @@ const methods: PaymentMethod[] = [
     bgColor: 'bg-orange-50',
     borderColor: 'border-orange-200',
     icon: <Smartphone className="text-orange-500" size={24} />,
-    number: '01XXXXXXXXX',
+    number: '01738052858',
     accountName: 'Masjid Fund',
     instructions: [
       'Open your Nagad app',
