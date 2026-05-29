@@ -1,6 +1,6 @@
 import { getSupabase } from '@/lib/supabase'
 import { Donation, Expense, DonationSummary } from '@/lib/types'
-import { TrendingUp, TrendingDown, Wallet, Smartphone, Building2, User, EyeOff, AlertCircle } from 'lucide-react'
+import { TrendingUp, TrendingDown, Wallet, Smartphone, Building2, User, EyeOff, AlertCircle, Banknote, Star } from 'lucide-react'
 
 export const dynamic = 'force-dynamic'
 
@@ -20,6 +20,8 @@ async function getData() {
       bkash: d.filter((x) => x.source === 'bkash').reduce((s, x) => s + x.amount, 0),
       nagad: d.filter((x) => x.source === 'nagad').reduce((s, x) => s + x.amount, 0),
       bank: d.filter((x) => x.source === 'bank').reduce((s, x) => s + x.amount, 0),
+      cash: d.filter((x) => x.source === 'cash').reduce((s, x) => s + x.amount, 0),
+      friday_collection: d.filter((x) => x.source === 'friday_collection').reduce((s, x) => s + x.amount, 0),
     }
     const totalExpenses = e.reduce((s, x) => s + x.amount, 0)
     const balance = summary.total - totalExpenses
@@ -29,7 +31,7 @@ async function getData() {
     return {
       donations: [] as Donation[],
       expenses: [] as Expense[],
-      summary: { total: 0, bkash: 0, nagad: 0, bank: 0 },
+      summary: { total: 0, bkash: 0, nagad: 0, bank: 0, cash: 0, friday_collection: 0 },
       totalExpenses: 0,
       balance: 0,
       error: 'Database not configured. Please set up Supabase environment variables.',
@@ -76,6 +78,8 @@ export default async function TransparencyPage() {
             <div className="flex justify-between"><span className="flex items-center gap-1"><Smartphone size={12} /> Bkash</span><span>{fmt(summary.bkash)}</span></div>
             <div className="flex justify-between"><span className="flex items-center gap-1"><Smartphone size={12} /> Nagad</span><span>{fmt(summary.nagad)}</span></div>
             <div className="flex justify-between"><span className="flex items-center gap-1"><Building2 size={12} /> Bank</span><span>{fmt(summary.bank)}</span></div>
+            <div className="flex justify-between"><span className="flex items-center gap-1"><Banknote size={12} /> Cash</span><span>{fmt(summary.cash)}</span></div>
+            <div className="flex justify-between"><span className="flex items-center gap-1"><Star size={12} /> Friday</span><span>{fmt(summary.friday_collection)}</span></div>
           </div>
         </div>
         <div className="bg-red-50 border border-red-100 rounded-2xl p-5 shadow-sm">
@@ -111,8 +115,14 @@ export default async function TransparencyPage() {
               {donations.map((d) => (
                 <div key={d.id} className="bg-white rounded-xl border border-gray-100 p-4 flex items-start justify-between shadow-sm">
                   <div className="flex items-center gap-3">
-                    <div className={`w-8 h-8 rounded-full flex items-center justify-center text-white text-xs font-bold ${d.source === 'bkash' ? 'bg-pink-500' : d.source === 'nagad' ? 'bg-orange-500' : 'bg-blue-500'}`}>
-                      {d.source === 'bkash' ? 'B' : d.source === 'nagad' ? 'N' : 'BK'}
+                    <div className={`w-8 h-8 rounded-full flex items-center justify-center text-white text-xs font-bold ${
+                      d.source === 'bkash' ? 'bg-pink-500' :
+                      d.source === 'nagad' ? 'bg-orange-500' :
+                      d.source === 'bank' ? 'bg-blue-500' :
+                      d.source === 'friday_collection' ? 'bg-green-600' :
+                      'bg-gray-500'
+                    }`}>
+                      {d.source === 'bkash' ? 'B' : d.source === 'nagad' ? 'N' : d.source === 'bank' ? 'BK' : d.source === 'friday_collection' ? 'জু' : 'C'}
                     </div>
                     <div>
                       <p className="font-semibold text-gray-800 text-sm flex items-center gap-1">
@@ -122,7 +132,7 @@ export default async function TransparencyPage() {
                           <span className="flex items-center gap-1"><User size={12} /> {d.donor_name || 'Unknown'}</span>
                         )}
                       </p>
-                      <p className="text-xs text-gray-400 capitalize">{d.source} · {fmtDate(d.date)}</p>
+                      <p className="text-xs text-gray-400 capitalize">{d.source === 'friday_collection' ? 'Friday Collection' : d.source} · {fmtDate(d.date)}</p>
                     </div>
                   </div>
                   <p className="font-bold text-green-700">{fmt(d.amount)}</p>

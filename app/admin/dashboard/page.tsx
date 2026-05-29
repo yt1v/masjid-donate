@@ -181,6 +181,8 @@ export default function DashboardPage() {
                     <option value="bkash">Bkash</option>
                     <option value="nagad">Nagad</option>
                     <option value="bank">Bank</option>
+                    <option value="cash">Cash</option>
+                    <option value="friday_collection">Friday Collection</option>
                   </select>
                 </div>
               </div>
@@ -215,7 +217,7 @@ export default function DashboardPage() {
                       <p className="font-semibold text-sm text-gray-800">
                         {d.is_anonymous ? '— Anonymous' : d.donor_name || 'Unknown'}
                       </p>
-                      <p className="text-xs text-gray-400 capitalize">{d.source} · {fmtDate(d.date)}</p>
+                      <p className="text-xs text-gray-400 capitalize">{d.source === 'friday_collection' ? 'Friday Collection' : d.source} · {fmtDate(d.date)}</p>
                     </div>
                     <div className="flex items-center gap-2">
                       <span className="font-bold text-green-700 text-sm">{fmt(d.amount)}</span>

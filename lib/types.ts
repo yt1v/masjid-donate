@@ -1,4 +1,4 @@
-export type DonationSource = 'bkash' | 'nagad' | 'bank'
+export type DonationSource = 'bkash' | 'nagad' | 'bank' | 'cash' | 'friday_collection'
 
 export interface Donation {
   id: number
@@ -24,6 +24,8 @@ export interface DonationSummary {
   bkash: number
   nagad: number
   bank: number
+  cash: number
+  friday_collection: number
 }
 
 export type FeedbackType = 'comment' | 'report' | 'suggestion'
