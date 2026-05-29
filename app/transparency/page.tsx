@@ -1,29 +1,40 @@
 import { getSupabase } from '@/lib/supabase'
 import { Donation, Expense, DonationSummary } from '@/lib/types'
-import { TrendingUp, TrendingDown, Wallet, Smartphone, Building2, User, EyeOff } from 'lucide-react'
+import { TrendingUp, TrendingDown, Wallet, Smartphone, Building2, User, EyeOff, AlertCircle } from 'lucide-react'
 
 export const dynamic = 'force-dynamic'
 
 async function getData() {
-  const supabase = getSupabase()
-  const [{ data: donations }, { data: expenses }] = await Promise.all([
-    supabase.from('donations').select('*').order('date', { ascending: false }),
-    supabase.from('expenses').select('*').order('date', { ascending: false }),
-  ])
+  try {
+    const supabase = getSupabase()
+    const [donationsRes, expensesRes] = await Promise.all([
+      supabase.from('donations').select('*').order('date', { ascending: false }),
+      supabase.from('expenses').select('*').order('date', { ascending: false }),
+    ])
 
-  const d = (donations ?? []) as Donation[]
-  const e = (expenses ?? []) as Expense[]
+    const d = (donationsRes.data ?? []) as Donation[]
+    const e = (expensesRes.data ?? []) as Expense[]
 
-  const summary: DonationSummary = {
-    total: d.reduce((s, x) => s + x.amount, 0),
-    bkash: d.filter((x) => x.source === 'bkash').reduce((s, x) => s + x.amount, 0),
-    nagad: d.filter((x) => x.source === 'nagad').reduce((s, x) => s + x.amount, 0),
-    bank: d.filter((x) => x.source === 'bank').reduce((s, x) => s + x.amount, 0),
+    const summary: DonationSummary = {
+      total: d.reduce((s, x) => s + x.amount, 0),
+      bkash: d.filter((x) => x.source === 'bkash').reduce((s, x) => s + x.amount, 0),
+      nagad: d.filter((x) => x.source === 'nagad').reduce((s, x) => s + x.amount, 0),
+      bank: d.filter((x) => x.source === 'bank').reduce((s, x) => s + x.amount, 0),
+    }
+    const totalExpenses = e.reduce((s, x) => s + x.amount, 0)
+    const balance = summary.total - totalExpenses
+
+    return { donations: d, expenses: e, summary, totalExpenses, balance, error: null }
+  } catch {
+    return {
+      donations: [] as Donation[],
+      expenses: [] as Expense[],
+      summary: { total: 0, bkash: 0, nagad: 0, bank: 0 },
+      totalExpenses: 0,
+      balance: 0,
+      error: 'Database not configured. Please set up Supabase environment variables.',
+    }
   }
-  const totalExpenses = e.reduce((s, x) => s + x.amount, 0)
-  const balance = summary.total - totalExpenses
-
-  return { donations: d, expenses: e, summary, totalExpenses, balance }
 }
 
 function fmt(n: number) {
@@ -35,7 +46,7 @@ function fmtDate(d: string) {
 }
 
 export default async function TransparencyPage() {
-  const { donations, expenses, summary, totalExpenses, balance } = await getData()
+  const { donations, expenses, summary, totalExpenses, balance, error } = await getData()
 
   return (
     <div className="max-w-5xl mx-auto px-4 py-12">
@@ -43,6 +54,16 @@ export default async function TransparencyPage() {
         <h1 className="text-3xl font-bold text-green-900">Financial Transparency</h1>
         <p className="text-gray-500 mt-2">Complete record of all donations received and expenses made</p>
       </div>
+
+      {error && (
+        <div className="mb-8 flex items-start gap-3 bg-amber-50 border border-amber-200 rounded-xl p-4 text-amber-800">
+          <AlertCircle size={20} className="flex-shrink-0 mt-0.5" />
+          <div>
+            <p className="font-semibold">Setup Required</p>
+            <p className="text-sm mt-0.5">{error}</p>
+          </div>
+        </div>
+      )}
 
       {/* Summary cards */}
       <div className="grid grid-cols-1 sm:grid-cols-3 gap-4 mb-10">
