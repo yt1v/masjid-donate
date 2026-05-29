@@ -8,7 +8,7 @@ export default function Footer() {
           <Logo size="sm" showText={false} />
           <div className="text-center">
             <p className="font-semibold text-white">Sabdi Badher Par Jame Masjid</p>
-            <p className="text-sm text-green-300 mt-1">সবদি বাঁধের পাড় জামে মসজিদ</p>
+            <p className="text-sm text-green-300 mt-1">সাব্দী বাঁধের পাড় জামে মসজিদ</p>
           </div>
           <p className="text-xs text-green-400 text-center md:text-right">
             All donations are used solely<br />for the masjid&apos;s welfare.

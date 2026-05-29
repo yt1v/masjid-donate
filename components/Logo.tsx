@@ -38,7 +38,7 @@ export default function Logo({ size = 'md', showText = true }: LogoProps) {
       </svg>
       {showText && (
         <div className="leading-tight">
-          <p className="text-xs font-medium text-green-700">সবদি বাঁধের পাড় জামে</p>
+          <p className="text-xs font-medium text-green-700">সাব্দী বাঁধের পাড় জামে</p>
           <p className="font-bold text-green-900 text-sm md:text-base">মসজিদ ফান্ড</p>
         </div>
       )}

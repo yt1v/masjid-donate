@@ -17,7 +17,7 @@ export default function Home() {
             Sabdi Badher Par<br />
             <span className="text-yellow-400">Jame Masjid</span>
           </h1>
-          <p className="text-green-200 mt-2 text-lg">সবদি বাঁধের পাড় জামে মসজিদ</p>
+          <p className="text-green-200 mt-2 text-lg">সাব্দী বাঁধের পাড় জামে মসজিদ</p>
           <p className="mt-6 text-green-100 text-lg max-w-xl mx-auto leading-relaxed">
             Your donations help maintain and grow our masjid. Every contribution —
             big or small — makes a difference for our community.
