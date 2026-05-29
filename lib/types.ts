@@ -25,3 +25,13 @@ export interface DonationSummary {
   nagad: number
   bank: number
 }
+
+export type FeedbackType = 'comment' | 'report' | 'suggestion'
+
+export interface Feedback {
+  id: number
+  name: string | null
+  message: string
+  type: FeedbackType
+  created_at: string
+}

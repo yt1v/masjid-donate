@@ -9,6 +9,7 @@ const links = [
   { href: '/', label: 'Home' },
   { href: '/donate', label: 'Donate' },
   { href: '/transparency', label: 'Transparency' },
+  { href: '/feedback', label: 'Feedback' },
 ]
 
 export default function Navbar() {

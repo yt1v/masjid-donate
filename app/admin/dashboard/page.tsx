@@ -1,8 +1,8 @@
 'use client'
 import { useState, useEffect, useCallback } from 'react'
 import { useRouter } from 'next/navigation'
-import { PlusCircle, LogOut, TrendingUp, TrendingDown, Wallet, Trash2 } from 'lucide-react'
-import { Donation, Expense, DonationSource } from '@/lib/types'
+import { PlusCircle, LogOut, TrendingUp, TrendingDown, Wallet, Trash2, MessageSquare, Flag, Lightbulb } from 'lucide-react'
+import { Donation, Expense, DonationSource, Feedback } from '@/lib/types'
 
 function fmt(n: number) {
   return '৳ ' + n.toLocaleString('en-BD')
@@ -13,9 +13,10 @@ function fmtDate(d: string) {
 
 export default function DashboardPage() {
   const router = useRouter()
-  const [tab, setTab] = useState<'donations' | 'expenses'>('donations')
+  const [tab, setTab] = useState<'donations' | 'expenses' | 'feedback'>('donations')
   const [donations, setDonations] = useState<Donation[]>([])
   const [expenses, setExpenses] = useState<Expense[]>([])
+  const [feedbacks, setFeedbacks] = useState<Feedback[]>([])
   const [loading, setLoading] = useState(true)
 
   // Donation form state
@@ -33,12 +34,14 @@ export default function DashboardPage() {
 
   const loadData = useCallback(async () => {
     setLoading(true)
-    const [dr, er] = await Promise.all([
+    const [dr, er, fr] = await Promise.all([
       fetch('/api/donations').then((r) => r.json()),
       fetch('/api/expenses').then((r) => r.json()),
+      fetch('/api/feedback').then((r) => r.json()),
     ])
     setDonations(dr.data ?? [])
     setExpenses(er.data ?? [])
+    setFeedbacks(fr.data ?? [])
     setLoading(false)
   }, [])
 
@@ -141,6 +144,9 @@ export default function DashboardPage() {
         </button>
         <button onClick={() => setTab('expenses')} className={`px-5 py-2 rounded-xl font-semibold text-sm transition-colors ${tab === 'expenses' ? 'bg-red-600 text-white' : 'bg-white border border-gray-200 text-gray-600 hover:bg-gray-50'}`}>
           Expenses ({expenses.length})
+        </button>
+        <button onClick={() => setTab('feedback')} className={`px-5 py-2 rounded-xl font-semibold text-sm transition-colors ${tab === 'feedback' ? 'bg-purple-600 text-white' : 'bg-white border border-gray-200 text-gray-600 hover:bg-gray-50'}`}>
+          Feedback ({feedbacks.length})
         </button>
       </div>
 
@@ -276,6 +282,39 @@ export default function DashboardPage() {
               </div>
             )}
           </div>
+        </div>
+      )}
+
+      {tab === 'feedback' && (
+        <div>
+          <h2 className="font-bold text-purple-900 mb-4 flex items-center gap-2">
+            <MessageSquare size={18} /> Community Feedback
+          </h2>
+          {loading ? <p className="text-gray-400 text-sm">Loading...</p> : feedbacks.length === 0 ? (
+            <p className="text-gray-400 text-sm">No feedback submitted yet.</p>
+          ) : (
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-3">
+              {feedbacks.map((f) => (
+                <div key={f.id} className="bg-white border border-gray-100 rounded-xl p-4 shadow-sm">
+                  <div className="flex items-start justify-between gap-2 mb-2">
+                    <div className="flex items-center gap-2">
+                      <span className={`inline-flex items-center gap-1 px-2.5 py-1 rounded-full text-xs font-semibold ${
+                        f.type === 'report' ? 'bg-red-100 text-red-700' :
+                        f.type === 'suggestion' ? 'bg-yellow-100 text-yellow-700' :
+                        'bg-purple-100 text-purple-700'
+                      }`}>
+                        {f.type === 'report' ? <Flag size={11} /> : f.type === 'suggestion' ? <Lightbulb size={11} /> : <MessageSquare size={11} />}
+                        {f.type.charAt(0).toUpperCase() + f.type.slice(1)}
+                      </span>
+                      <span className="text-xs text-gray-400">{new Date(f.created_at).toLocaleDateString('en-BD', { year: 'numeric', month: 'short', day: 'numeric' })}</span>
+                    </div>
+                    <span className="text-xs font-medium text-gray-600">{f.name || 'Anonymous'}</span>
+                  </div>
+                  <p className="text-sm text-gray-700 leading-relaxed">{f.message}</p>
+                </div>
+              ))}
+            </div>
+          )}
         </div>
       )}
     </div>
