@@ -1,28 +1,39 @@
 'use client'
-import { useState } from 'react'
+import { useState, useRef } from 'react'
 import { useRouter } from 'next/navigation'
+import ReCAPTCHA from 'react-google-recaptcha'
 import Logo from '@/components/Logo'
 import { Lock } from 'lucide-react'
 
 export default function AdminLoginPage() {
   const router = useRouter()
+  const recaptchaRef = useRef<ReCAPTCHA>(null)
   const [password, setPassword] = useState('')
   const [error, setError] = useState('')
   const [loading, setLoading] = useState(false)
 
   async function handleSubmit(e: React.FormEvent) {
     e.preventDefault()
-    setLoading(true)
     setError('')
+
+    const token = recaptchaRef.current?.getValue()
+    if (!token) {
+      setError('Please complete the reCAPTCHA verification.')
+      return
+    }
+
+    setLoading(true)
     const res = await fetch('/api/auth', {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({ password }),
+      body: JSON.stringify({ password, recaptchaToken: token }),
     })
     if (res.ok) {
       router.push('/admin/dashboard')
     } else {
-      setError('Incorrect password. Please try again.')
+      const data = await res.json()
+      setError(data.error || 'Incorrect password. Please try again.')
+      recaptchaRef.current?.reset()
       setLoading(false)
     }
   }
@@ -52,6 +63,10 @@ export default function AdminLoginPage() {
               />
             </div>
           </div>
+          <ReCAPTCHA
+            ref={recaptchaRef}
+            sitekey={process.env.NEXT_PUBLIC_RECAPTCHA_SITE_KEY!}
+          />
           {error && (
             <p className="text-sm text-red-600 bg-red-50 px-3 py-2 rounded-lg">{error}</p>
           )}
