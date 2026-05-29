@@ -2,6 +2,7 @@ import Link from 'next/link'
 import { Heart, Eye, HandCoins } from 'lucide-react'
 import Logo from '@/components/Logo'
 import MasjidSlider from '@/components/MasjidSlider'
+import QRSection from '@/components/QRSection'
 
 export default function Home() {
   return (
@@ -40,6 +41,9 @@ export default function Home() {
 
       {/* Masjid Photo Slider */}
       <MasjidSlider />
+
+      {/* QR Codes */}
+      <QRSection />
 
       {/* Features */}
       <section className="py-16 px-4 bg-white">
