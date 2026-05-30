@@ -1,6 +1,7 @@
 import { getSupabase } from '@/lib/supabase'
 import { Donation, Expense, DonationSummary } from '@/lib/types'
 import { TrendingUp, TrendingDown, Wallet, Smartphone, Building2, User, EyeOff, AlertCircle, Banknote, Star } from 'lucide-react'
+import ExpensesList from '@/components/ExpensesList'
 
 export const dynamic = 'force-dynamic'
 
@@ -147,28 +148,7 @@ export default async function TransparencyPage() {
           <h2 className="text-xl font-bold text-red-800 mb-4 flex items-center gap-2">
             <TrendingDown size={20} className="text-red-500" /> Expenses
           </h2>
-          {expenses.length === 0 ? (
-            <div className="bg-white rounded-xl border border-gray-100 p-8 text-center text-gray-400">
-              No expenses recorded yet.
-            </div>
-          ) : (
-            <div className="space-y-3">
-              {expenses.map((e) => (
-                <div key={e.id} className="bg-white rounded-xl border border-gray-100 p-4 shadow-sm">
-                  <div className="flex items-start justify-between">
-                    <div>
-                      <p className="font-semibold text-gray-800 text-sm">{e.category}</p>
-                      {e.description && (
-                        <p className="text-xs text-gray-500 mt-0.5">{e.description}</p>
-                      )}
-                      <p className="text-xs text-gray-400 mt-1">{fmtDate(e.date)}</p>
-                    </div>
-                    <p className="font-bold text-red-600">{fmt(e.amount)}</p>
-                  </div>
-                </div>
-              ))}
-            </div>
-          )}
+          <ExpensesList expenses={expenses} />
         </div>
       </div>
     </div>

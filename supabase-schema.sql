@@ -6,7 +6,7 @@ create table if not exists donations (
   donor_name text,
   is_anonymous boolean not null default false,
   amount numeric(10,2) not null,
-  source text not null check (source in ('bkash', 'nagad', 'bank')),
+  source text not null check (source in ('bkash', 'nagad', 'bank', 'cash', 'friday_collection')),
   transaction_id text,
   date date not null default current_date,
   notes text,
